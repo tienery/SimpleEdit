@@ -17,8 +17,8 @@ namespace SimpleEdit
             ProcessStartInfo info = new ProcessStartInfo("cmd.exe", "/c " + cmd);
             info.WorkingDirectory = Environment.CurrentDirectory;
             info.CreateNoWindow = !showWindow;
-            info.RedirectStandardError = !showWindow;
-            info.RedirectStandardOutput = !showWindow;
+            info.RedirectStandardError = true;
+            info.RedirectStandardOutput = true;
             info.UseShellExecute = false;
 
             Process p = Process.Start(info);

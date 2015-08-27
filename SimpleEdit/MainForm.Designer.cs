@@ -33,8 +33,10 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.pnlCode = new System.Windows.Forms.Panel();
             this.MainEditor = new SimpleEdit.Editor();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.txtResults = new System.Windows.Forms.TextBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.lblFileInfo = new System.Windows.Forms.Label();
             this.lblCurrentDir = new System.Windows.Forms.Label();
             this.txtCommand = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -43,6 +45,7 @@
             this.splitContainer1.SuspendLayout();
             this.pnlCode.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainEditor)).BeginInit();
+            this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -59,8 +62,8 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.panel2);
             this.splitContainer1.Panel2.Controls.Add(this.panel1);
-            this.splitContainer1.Panel2.Controls.Add(this.lblCurrentDir);
             this.splitContainer1.Panel2.Controls.Add(this.txtCommand);
             this.splitContainer1.Size = new System.Drawing.Size(784, 561);
             this.splitContainer1.SplitterDistance = 408;
@@ -108,14 +111,14 @@
             this.MainEditor.Load += new System.EventHandler(this.MainEditor_Load);
             this.MainEditor.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainEditor_KeyUp);
             // 
-            // panel1
+            // panel2
             // 
-            this.panel1.Controls.Add(this.txtResults);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(784, 116);
-            this.panel1.TabIndex = 2;
+            this.panel2.Controls.Add(this.txtResults);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(784, 118);
+            this.panel2.TabIndex = 3;
             // 
             // txtResults
             // 
@@ -125,25 +128,50 @@
             this.txtResults.Name = "txtResults";
             this.txtResults.ReadOnly = true;
             this.txtResults.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtResults.Size = new System.Drawing.Size(784, 116);
+            this.txtResults.Size = new System.Drawing.Size(784, 118);
             this.txtResults.TabIndex = 0;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.lblFileInfo);
+            this.panel1.Controls.Add(this.lblCurrentDir);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel1.Location = new System.Drawing.Point(0, 118);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(784, 13);
+            this.panel1.TabIndex = 1;
+            // 
+            // lblFileInfo
+            // 
+            this.lblFileInfo.AutoSize = true;
+            this.lblFileInfo.Dock = System.Windows.Forms.DockStyle.Right;
+            this.lblFileInfo.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblFileInfo.Location = new System.Drawing.Point(737, 0);
+            this.lblFileInfo.Name = "lblFileInfo";
+            this.lblFileInfo.Size = new System.Drawing.Size(47, 11);
+            this.lblFileInfo.TabIndex = 1;
+            this.lblFileInfo.Text = "label1";
             // 
             // lblCurrentDir
             // 
             this.lblCurrentDir.AutoSize = true;
-            this.lblCurrentDir.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.lblCurrentDir.Location = new System.Drawing.Point(0, 116);
+            this.lblCurrentDir.Dock = System.Windows.Forms.DockStyle.Left;
+            this.lblCurrentDir.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCurrentDir.Location = new System.Drawing.Point(0, 0);
             this.lblCurrentDir.Name = "lblCurrentDir";
-            this.lblCurrentDir.Size = new System.Drawing.Size(92, 13);
-            this.lblCurrentDir.TabIndex = 1;
-            this.lblCurrentDir.Text = "Current Directory: ";
+            this.lblCurrentDir.Size = new System.Drawing.Size(47, 11);
+            this.lblCurrentDir.TabIndex = 0;
+            this.lblCurrentDir.Text = "label1";
             // 
             // txtCommand
             // 
+            this.txtCommand.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.txtCommand.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.RecentlyUsedList;
             this.txtCommand.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.txtCommand.Location = new System.Drawing.Point(0, 129);
+            this.txtCommand.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtCommand.Location = new System.Drawing.Point(0, 131);
             this.txtCommand.Name = "txtCommand";
-            this.txtCommand.Size = new System.Drawing.Size(784, 20);
+            this.txtCommand.Size = new System.Drawing.Size(784, 18);
             this.txtCommand.TabIndex = 0;
             this.txtCommand.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainEditor_KeyUp);
             // 
@@ -165,6 +193,8 @@
             this.splitContainer1.ResumeLayout(false);
             this.pnlCode.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.MainEditor)).EndInit();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
@@ -177,9 +207,11 @@
         private System.Windows.Forms.Panel pnlCode;
         private Editor MainEditor;
         private System.Windows.Forms.TextBox txtCommand;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.TextBox txtResults;
+        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label lblCurrentDir;
+        private System.Windows.Forms.Label lblFileInfo;
     }
 }
 

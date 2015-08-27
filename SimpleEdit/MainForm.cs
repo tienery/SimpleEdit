@@ -6,9 +6,11 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Diagnostics;
 using FastColoredTextBoxNS;
 
 namespace SimpleEdit
@@ -19,6 +21,9 @@ namespace SimpleEdit
         private string previousDoc;
         private List<string> dirs;
         private List<string> prevCommands;
+        private string currentFindValue;
+        private string currentReplaceValue;
+        private SynchronizationContext _sync;
         private bool saved;
         private int currentPrevIndex;
 
@@ -29,21 +34,7 @@ namespace SimpleEdit
             dirs = new List<string>();
             prevCommands = new List<string>();
 
-            RebuildMenu();
-        }
-
-        private void RebuildMenu(string value = "")
-        {
-            txtCommand.AutoCompleteCustomSource.Clear();
-            switch (value)
-            {
-                case "cd":
-                    txtCommand.AutoCompleteCustomSource.AddRange(dirs.ToArray());
-                    break;
-                case "cmd":
-                    txtCommand.AutoCompleteCustomSource.AddRange(prevCommands.ToArray());
-                    break;
-            }
+            _sync = SynchronizationContext.Current;
         }
 
         private string RootDir(string path)
@@ -142,6 +133,7 @@ namespace SimpleEdit
             {
                 saved = true;
                 File.WriteAllText(previousDoc, MainEditor.Text);
+                AppendResult(previousDoc + " successfully saved.");
             }
         }
 
@@ -210,11 +202,11 @@ namespace SimpleEdit
 
                     if (value.StartsWith("cmds"))
                     {
-                         WriteResult(Utils.ExecuteCommand(value.Substring(5), true));
+                        AsyncExecuteCommand(value.Substring(5));
                     }
                     else if (value.StartsWith("cmd"))
                     {
-                        WriteResult(Utils.ExecuteCommand(value.Substring(4)));
+                        WriteResult(Utils.ExecuteCommand(value.Substring(4), false));
                     }
                     else if (value.StartsWith("open"))
                     {
@@ -245,6 +237,10 @@ namespace SimpleEdit
                             Environment.CurrentDirectory = RootDir(Environment.CurrentDirectory);
                         }
                         lblCurrentDir.Text = Environment.CurrentDirectory;
+                    }
+                    else if (value.StartsWith("find"))
+                    {
+                        MainEditor.ShowFindDialog(value.Substring(5));
                     }
                 }
 
@@ -282,6 +278,8 @@ namespace SimpleEdit
                 else
                     MainEditor.Focus();
             }
+
+            
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -339,6 +337,54 @@ namespace SimpleEdit
 
                 File.WriteAllText("autoCompleteCmd", result);
             }
+        }
+
+        public void AsyncExecuteCommand(string cmd)
+        {
+            txtResults.Text = "Executing " + cmd + " ...\n";
+
+            ProcessStartInfo info = new ProcessStartInfo("cmd.exe", "/c " + cmd);
+            info.WorkingDirectory = Environment.CurrentDirectory;
+            info.CreateNoWindow = true;
+            info.RedirectStandardError = true;
+            info.RedirectStandardOutput = true;
+            info.UseShellExecute = false;
+
+            Process p = new Process();
+            p.StartInfo = info;
+
+            p.OutputDataReceived += p_OutputDataReceived;
+            p.ErrorDataReceived += p_ErrorDataReceived;
+
+            p.Start();
+            p.BeginErrorReadLine();
+            p.BeginOutputReadLine();
+
+            p.WaitForExit();
+        }
+
+        void p_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            DisplayResults(e.Data);
+        }
+
+        void p_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            DisplayResults(e.Data);
+        }
+
+        private void DisplayResults(string output)
+        {
+            _sync.Post(_ =>  {
+                try
+                {
+                    txtResults.AppendText(output);
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }, null);
         }
 
     }

@@ -37,7 +37,7 @@ namespace SimpleEdit
 
         public Editor()
         {
-
+            
         }
 
         public void SetLang(string lang)
@@ -93,6 +93,7 @@ namespace SimpleEdit
             e.ChangedRange.SetFoldingMarkers("{", "}");
             e.ChangedRange.SetFoldingMarkers("#if", "#end");
             e.ChangedRange.SetFoldingMarkers("#elseif", "#end");
+            e.ChangedRange.SetFoldingMarkers("#ifndef", "#end");
 
             e.ChangedRange.SetStyle(comments, @"//.*$", RegexOptions.Multiline | RegexCompiledOption);
             e.ChangedRange.SetStyle(comments, @"(/\*.*?\*/)|(/\*.*)", RegexOptions.Singleline | RegexCompiledOption);
@@ -100,9 +101,10 @@ namespace SimpleEdit
                 RegexOptions.RightToLeft | RegexCompiledOption);
 
             e.ChangedRange.SetStyle(classes, @"(class|new|struct|enum)\s+(<range>[\w_]+)", RegexCompiledOption);
-            e.ChangedRange.SetStyle(strings, @""""" | @"""" | '' | @"".*? "" | (?< !@)(?< range > "".*?[^\\]"") | '.*?[^\\]'", RegexCompiledOption);
+            e.ChangedRange.SetStyle(strings, @"""""|@""""|''|@"".*?""|(?<!@)(?<range>"".*?[^\\]"")|'.*?[^\\]'", RegexCompiledOption);
             e.ChangedRange.SetStyle(numbers, @"\b\d+[\.]?\d*([eE]\-?\d+)?[lLdDfF]?\b|\b0x[a-fA-F\d]+\b", RegexCompiledOption);
             e.ChangedRange.SetStyle(keywords, @"\b(alignas|alignof|and|and_eq|asm|auto|bitand|bitor|bool|break|case|catch|char|char16_t|char32_t|class|compl|const|constexpr|const_cast|continue|decltype|default|delete|do|double|dynamic_cast|else|enum|explicit|export|extern|false|float|for|friend|goto|if|inline|int|long|mutable|namespace|new|noexcept|not|not_eq|nullptr|operator|or|or_eq|private|protected|public|register|reinterpret_cast|return|short|signed|sizeof|static|static_assert|static_cast|struct|switch|template|this|thread_local|throw|true|try|typedef|typeid|typename|union|unsigned|using|virtual|void|volatile|wchar_t|while|xor|xor_eq)\b", RegexCompiledOption);
+            e.ChangedRange.SetStyle(includes, @"#include (\<(.+?)\>|""(.+?)"")");
         }
 
         private void HaxeEditor_TextChanged(object sender, TextChangedEventArgs e)
