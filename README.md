@@ -22,7 +22,7 @@ You can navigate the file system just as you would using the command-line with s
 
 * You cannot cd out multiple folders like this: `../..` it can only be done once.
 
-Pressing `CTRL+TAB` while in the editor will automatically bring focus to the command box at the bottom of the application.
+Pressing `CTRL+TAB` will shift between tabs.
 
 The following commands are available:
 
@@ -30,6 +30,8 @@ The following commands are available:
 * `cmds` allows you to execute any command-line argument, but not does redirect the results. This does not pause execution of the client, and opens a separate window executing the command.
 * `new` creates a new file in the current directory.
 * `open` opens a file in the current directory.
-* `save` saves the currently opened file.
+* `save` saves the currently opened file in the currently selected tab.
+* `opent` opens a file in the current directory in a new tab.
+* `newt` creates a new file in a new tab.
 
-All commands you previously used can be returned to using the `UP` and `DOWN` arrow keys, just like command prompt.
+All commands you previously used can be returned to using the `UP` and `DOWN` arrow keys, just like command prompt. These commands are saved in a file at the root of the application.
