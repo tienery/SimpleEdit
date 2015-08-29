@@ -27,7 +27,7 @@ Pressing `CTRL+TAB` will shift between tabs.
 The following commands are available:
 
 * `cmd` allows you to execute any command-line argument, printing the results in the above box. This pauses execution of the client until the command is complete. It is best to use `cmds` for all other operations.
-* `cmds` allows you to execute any command-line argument, but not does redirect the results. This does not pause execution of the client, and opens a separate window executing the command.
+* `cmds` allows you to execute any command-line argument, redirecting the results asynchronously. Currently, this uses an async thread from the MainForm, so it still freezes. This known issue will be patched when a solution is found.
 * `new` creates a new file in the current directory.
 * `open` opens a file in the current directory.
 * `save` saves the currently opened file in the currently selected tab.
