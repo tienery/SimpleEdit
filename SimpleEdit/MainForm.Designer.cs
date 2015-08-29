@@ -32,6 +32,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.pnlCode = new System.Windows.Forms.Panel();
+            this.tcMain = new System.Windows.Forms.TabControl();
+            this.tpMain = new System.Windows.Forms.TabPage();
             this.MainEditor = new SimpleEdit.Editor();
             this.panel2 = new System.Windows.Forms.Panel();
             this.txtResults = new System.Windows.Forms.TextBox();
@@ -44,6 +46,8 @@
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.pnlCode.SuspendLayout();
+            this.tcMain.SuspendLayout();
+            this.tpMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainEditor)).BeginInit();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -71,12 +75,33 @@
             // 
             // pnlCode
             // 
-            this.pnlCode.Controls.Add(this.MainEditor);
+            this.pnlCode.Controls.Add(this.tcMain);
             this.pnlCode.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlCode.Location = new System.Drawing.Point(0, 0);
             this.pnlCode.Name = "pnlCode";
             this.pnlCode.Size = new System.Drawing.Size(784, 408);
             this.pnlCode.TabIndex = 0;
+            // 
+            // tcMain
+            // 
+            this.tcMain.Controls.Add(this.tpMain);
+            this.tcMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tcMain.Location = new System.Drawing.Point(0, 0);
+            this.tcMain.Name = "tcMain";
+            this.tcMain.SelectedIndex = 0;
+            this.tcMain.Size = new System.Drawing.Size(784, 408);
+            this.tcMain.TabIndex = 0;
+            // 
+            // tpMain
+            // 
+            this.tpMain.Controls.Add(this.MainEditor);
+            this.tpMain.Location = new System.Drawing.Point(4, 22);
+            this.tpMain.Name = "tpMain";
+            this.tpMain.Padding = new System.Windows.Forms.Padding(3);
+            this.tpMain.Size = new System.Drawing.Size(776, 382);
+            this.tpMain.TabIndex = 0;
+            this.tpMain.Text = "Untitled";
+            this.tpMain.UseVisualStyleBackColor = true;
             // 
             // MainEditor
             // 
@@ -98,18 +123,18 @@
             this.MainEditor.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.MainEditor.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.MainEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.MainEditor.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.MainEditor.IsReplaceMode = false;
-            this.MainEditor.Location = new System.Drawing.Point(0, 0);
+            this.MainEditor.Location = new System.Drawing.Point(3, 3);
             this.MainEditor.Name = "MainEditor";
             this.MainEditor.Paddings = new System.Windows.Forms.Padding(0);
             this.MainEditor.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.MainEditor.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("MainEditor.ServiceColors")));
-            this.MainEditor.Size = new System.Drawing.Size(784, 408);
-            this.MainEditor.TabIndex = 0;
+            this.MainEditor.Size = new System.Drawing.Size(770, 376);
+            this.MainEditor.TabIndex = 1;
             this.MainEditor.Zoom = 100;
-            this.MainEditor.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.MainEditor_TextChanged);
-            this.MainEditor.Load += new System.EventHandler(this.MainEditor_Load);
-            this.MainEditor.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainEditor_KeyUp);
+            this.MainEditor.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.currentEditor_TextChanged);
+            this.MainEditor.KeyUp += new System.Windows.Forms.KeyEventHandler(this.currentEditor_KeyUp);
             // 
             // panel2
             // 
@@ -173,7 +198,7 @@
             this.txtCommand.Name = "txtCommand";
             this.txtCommand.Size = new System.Drawing.Size(784, 18);
             this.txtCommand.TabIndex = 0;
-            this.txtCommand.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainEditor_KeyUp);
+            this.txtCommand.KeyUp += new System.Windows.Forms.KeyEventHandler(this.currentEditor_KeyUp);
             // 
             // MainForm
             // 
@@ -192,6 +217,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.pnlCode.ResumeLayout(false);
+            this.tcMain.ResumeLayout(false);
+            this.tpMain.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.MainEditor)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
@@ -205,13 +232,15 @@
 
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Panel pnlCode;
-        private Editor MainEditor;
         private System.Windows.Forms.TextBox txtCommand;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.TextBox txtResults;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label lblCurrentDir;
         private System.Windows.Forms.Label lblFileInfo;
+        private System.Windows.Forms.TabControl tcMain;
+        private System.Windows.Forms.TabPage tpMain;
+        private Editor MainEditor;
     }
 }
 

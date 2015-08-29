@@ -14,6 +14,8 @@ namespace SimpleEdit
 
         protected static readonly Platform platformType = PlatformType.GetOperationSystemPlatform();
 
+        public string currentDoc;
+
         public static RegexOptions RegexCompiledOption
         {
             get
@@ -44,6 +46,8 @@ namespace SimpleEdit
         {
             TextChanged -= HaxeEditor_TextChanged;
             TextChanged -= CPPEditor_TextChanged;
+
+            
 
             switch (lang)
             {

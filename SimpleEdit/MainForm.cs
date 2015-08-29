@@ -18,7 +18,6 @@ namespace SimpleEdit
     public partial class MainForm : Form
     {
 
-        private string previousDoc;
         private List<string> dirs;
         private List<string> prevCommands;
         private string currentFindValue;
@@ -26,6 +25,12 @@ namespace SimpleEdit
         private SynchronizationContext _sync;
         private bool saved;
         private int currentPrevIndex;
+        private Editor currentEditor { 
+            get 
+            {
+                return (Editor)tcMain.SelectedTab.Controls[0];
+            } 
+        }
 
         public MainForm()
         {
@@ -49,26 +54,21 @@ namespace SimpleEdit
             }
         }
 
-        private void OpenFile(string file)
+        private void OpenFile(string file, bool newTab = false)
         {
-            if (MainEditor.Text != "" && !saved)
+            if (currentEditor.Text != "" && !saved)
             {
                 var response = MessageBox.Show("Would you first like to save the current document?", "Save", MessageBoxButtons.YesNoCancel);
                 if (response == System.Windows.Forms.DialogResult.Yes)
                 {
-                    if (previousDoc != "")
-                        File.WriteAllText(previousDoc, MainEditor.Text);
+                    if (currentEditor.currentDoc != "")
+                    {
+                        File.WriteAllText(currentEditor.currentDoc, currentEditor.Text);
+                        AppendResult(currentEditor.currentDoc + " saved successfully.");
+                    }
                     else
                     {
-                        var sfd = new SaveFileDialog();
-                        sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                        sfd.Filter = "All Files (*.*)|*.*";
-                        if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                        {
-                            File.WriteAllText(sfd.FileName, MainEditor.Text);
-                        }
-                        else
-                            return;
+                        OpenOFD();
                     }
                 }
                 else if (response == System.Windows.Forms.DialogResult.Cancel)
@@ -80,15 +80,29 @@ namespace SimpleEdit
             {
                 var contents = File.ReadAllText(path);
 
+                if (newTab)
+                    NewTab(file);
+
                 SetEditorLang(path, contents);
 
-                MainEditor.Text = contents;
-                previousDoc = path;
+                currentEditor.Text = contents;
+                currentEditor.currentDoc = path;
             }
             else
             {
                 WriteResult("The file you are attempting to open does not exist");
             }
+        }
+
+        private void NewTab(string file = "")
+        {
+            TabPage t = new TabPage(file);
+            var editor = new Editor() { Dock = DockStyle.Fill };
+            editor.TextChanged += currentEditor_TextChanged;
+            editor.KeyUp += currentEditor_KeyUp;
+            t.Controls.Add(editor);
+            tcMain.TabPages.Add(t);
+            tcMain.SelectedTab = t;
         }
 
         private string CheckPath(string path)
@@ -99,52 +113,70 @@ namespace SimpleEdit
         private void SetEditorLang(string path, string contents)
         {
             if (CheckPath(path) == ".cpp" || CheckPath(path) == ".c" || CheckPath(path) == ".h")
-                MainEditor.SetLang("cpp");
+                currentEditor.SetLang("cpp");
             else if (CheckPath(path) == ".hx")
-                MainEditor.SetLang("haxe");
+                currentEditor.SetLang("haxe");
             else if (CheckPath(path) == ".sql")
-                MainEditor.SetLang("sql");
+                currentEditor.SetLang("sql");
             else if (CheckPath(path) == ".html" || CheckPath(path) == ".htm" || CheckPath(path) == ".asp" || CheckPath(path) == ".aspx")
-                MainEditor.SetLang("html");
+                currentEditor.SetLang("html");
             else if (CheckPath(path) == ".cs")
-                MainEditor.SetLang("cs");
+                currentEditor.SetLang("cs");
             else if (CheckPath(path) == ".js")
-                MainEditor.SetLang("js");
+                currentEditor.SetLang("js");
             else if (CheckPath(path) == ".lua")
-                MainEditor.SetLang("lua");
+                currentEditor.SetLang("lua");
             else if (CheckPath(path) == ".php")
             {
                 if (contents.StartsWith("<?php"))
-                    MainEditor.SetLang("php");
+                    currentEditor.SetLang("php");
                 else
-                    MainEditor.SetLang("html");
+                    currentEditor.SetLang("html");
             }
             else if (CheckPath(path) == ".vb")
-                MainEditor.SetLang("vb");
+                currentEditor.SetLang("vb");
             else if (CheckPath(path) == ".xml")
-                MainEditor.SetLang("xml");
+                currentEditor.SetLang("xml");
             else
-                MainEditor.SetLang("");
+                currentEditor.SetLang("");
         }
 
         private void SaveFile()
         {
-            if (previousDoc != "")
+            if (currentEditor.currentDoc != "" || currentEditor.currentDoc != null)
             {
                 saved = true;
-                File.WriteAllText(previousDoc, MainEditor.Text);
-                AppendResult(previousDoc + " successfully saved.");
+                File.WriteAllText(currentEditor.currentDoc, currentEditor.Text);
+                AppendResult(currentEditor.currentDoc + " successfully saved.");
             }
+            else
+                OpenOFD();
         }
 
-        private void NewFile(string file)
+        private void OpenOFD()
+        {
+            var sfd = new SaveFileDialog();
+            sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            sfd.Filter = "All Files (*.*)|*.*";
+            if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                File.WriteAllText(sfd.FileName, currentEditor.Text);
+            }
+            else
+                return;
+        }
+
+        private void NewFile(string file, bool newTab = false)
         {
             var path = Environment.CurrentDirectory + "/" + file;
             if (!File.Exists(path))
             {
                 try
                 {
-                    previousDoc = path;
+                    if (newTab)
+                        NewTab(file);
+
+                    currentEditor.currentDoc = path;
                     File.WriteAllText(path, "");
 
                     SetEditorLang(path, "");
@@ -167,17 +199,17 @@ namespace SimpleEdit
             txtResults.Text += "\n" + result;
         }
 
-        private void MainEditor_Load(object sender, EventArgs e)
+        private void currentEditor_Load(object sender, EventArgs e)
         {
 
         }
 
-        private void MainEditor_TextChanged(object sender, FastColoredTextBoxNS.TextChangedEventArgs e)
+        private void currentEditor_TextChanged(object sender, FastColoredTextBoxNS.TextChangedEventArgs e)
         {
             saved = false;
         }
 
-        private void MainEditor_KeyUp(object sender, KeyEventArgs e)
+        private void currentEditor_KeyUp(object sender, KeyEventArgs e)
         {
             if (sender == txtCommand)
             {
@@ -208,6 +240,10 @@ namespace SimpleEdit
                     {
                         WriteResult(Utils.ExecuteCommand(value.Substring(4), false));
                     }
+                    else if (value.StartsWith("opent"))
+                    {
+                        OpenFile(value.Substring(6), true);
+                    }
                     else if (value.StartsWith("open"))
                     {
                         OpenFile(value.Substring(5));
@@ -215,6 +251,10 @@ namespace SimpleEdit
                     else if (value.StartsWith("save"))
                     {
                         SaveFile();
+                    }
+                    else if (value.StartsWith("newt"))
+                    {
+                        NewFile(value.Substring(5), true);
                     }
                     else if (value.StartsWith("new"))
                     {
@@ -225,9 +265,9 @@ namespace SimpleEdit
                         var sub = value.Substring(3);
                         if (sub != "..")
                         {
-                            if (!Regex.IsMatch(sub, @"^[A-Z]+?:\\") && Directory.Exists(Environment.CurrentDirectory + "/" + sub))
+                            if (!Regex.IsMatch(sub, @"^[A-Z]+?:(\\)?(/)?") && Directory.Exists(Environment.CurrentDirectory + "/" + sub))
                                 Environment.CurrentDirectory = sub;
-                            else if (Regex.IsMatch(sub, @"^[A-Z]+?:\\") && Directory.Exists(sub))
+                            else if (Regex.IsMatch(sub, @"^[A-Z]+?:(\\)?(/)?") && Directory.Exists(sub))
                                 Environment.CurrentDirectory = sub;
                             else
                                 AppendResult("Attempt to change directory failed because the path does not exist.");
@@ -240,7 +280,7 @@ namespace SimpleEdit
                     }
                     else if (value.StartsWith("find"))
                     {
-                        MainEditor.ShowFindDialog(value.Substring(5));
+                        currentEditor.ShowFindDialog(value.Substring(5));
                     }
                 }
 
@@ -273,10 +313,10 @@ namespace SimpleEdit
 
             if (e.Control && e.KeyCode == Keys.Tab)
             {
-                if (MainEditor.Focused)
+                if (currentEditor.Focused)
                     txtCommand.Focus();
                 else
-                    MainEditor.Focus();
+                    currentEditor.Focus();
             }
 
             
